@@ -42,19 +42,17 @@ And return
 
 ## Tested Environments
 - Windows 10 64-bit .NET 7.0, Powershell 5.1
-- Melissa data files for 2023-Q2
+- Melissa data files for 2023-Q3
 
 ## Required File(s) and Programs
 
 #### Binaries
-
 This is the c++ code of the Melissa Object.
 
 - mdAddr.dll
 - mdGeo.dll
 - mdGlobalAddr.dll
 - mdRightFielder.dll
-
 
 #### Data File(s)
 - Addr.dbf
@@ -84,8 +82,6 @@ This is the c++ code of the Melissa Object.
 - mdAddrKeyCA.db
 - mdCanada3.db
 - mdCanadaPOC.db
-- mdEmail.cfg
-- mdEmail.db3
 - mdGeoCode.db3
 - mdGlobalAddr.ffbb
 - mdGlobalAddr.ffhb
@@ -93,19 +89,13 @@ This is the c++ code of the Melissa Object.
 - mdGlobalAddr.ffps
 - mdGlobalAddr.ffst
 - mdGlobalAddr.sac
-- mdGlobalPhone.dat
 - mdLACS256.dat
-- mdName.cfg
-- mdName.dat
-- mdPhone.dat
-- mdPhone.idx
 - mdRBDI.dat
 - mdRightFielder.cfg
 - mdRightFielder.dat
 - mdSteLink256.dat
 - mdSuiteFinder.db
 - month256.dat
-- ZIPNPA.TXT
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -145,7 +135,7 @@ The console will then prompt you with the following warning shown in the image b
 
 #### Download this project
 ```
-$ git clone https://github.com/MelissaData/GlobalAddressObject-Dotnet.git
+$ git clone https://github.com/MelissaData/GlobalAddressObject-Dotnet
 $ cd GlobalAddressObject-Dotnet
 ```
 
@@ -167,7 +157,6 @@ Melissa Updater is a CLI application allowing the user to update their Melissa a
 	- Copy all the dll(s) mentioned above into the `MelissaGlobalAddressObjectWindowsDotnet` project folder.
 	
 ## Run Powershell Script
-
 Parameters:
 - -addressLine1: a test address line 1
 - -addressLine2 (optional): a test address line 2
@@ -177,7 +166,7 @@ Parameters:
 - -postalCode: a test postal code
 - -country: a test country
  	
-  This is convenient when you want to get results for a specific address in one run instead of testing multiple addresses in interactive mode.
+  These are convenient when you want to get results for a specific address in one run instead of testing multiple addresses in interactive mode.
 
 - -license (optional): a license string to test the Global Address Object
 - -quiet (optional): add to the command if you do not want to get any console output from the Melissa Updater
@@ -209,8 +198,7 @@ When you have modified the script to match your data location, let's run the scr
 This is the expected output from a successful setup for interactive mode:
 
 ![alt text](/screenshots/output.png)
-
-    
+ 
 ## Troubleshooting
 
 Troubleshooting for errors found while running your program.

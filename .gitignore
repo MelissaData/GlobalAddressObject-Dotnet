@@ -9,6 +9,7 @@
 [Mm]elissa[Gg]lobal[Aa]ddress[Oo]bject[Ww]indows[Dd]otnet/[Bb]uild
 
 # User-specific files
+*.hash
 *.rsuser
 *.suo
 *.user

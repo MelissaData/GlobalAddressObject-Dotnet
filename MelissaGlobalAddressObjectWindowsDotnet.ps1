@@ -17,7 +17,7 @@ param(
 
 ######################### Classes ##########################
 
-class DLLConfig {
+class FileConfig {
   [string] $FileName;
   [string] $ReleaseVersion;
   [string] $OS;
@@ -33,7 +33,8 @@ class ManifestConfig {
 
 ######################### Config ###########################
 
-$RELEASE_VERSION = '2023.Q2'
+$RELEASE_VERSION = '2023.Q3'
+$ProductName = "GLOBAL_DQ_DATA"
 
 # Uses the location of the .ps1 file 
 # Modify this if you want to use 
@@ -52,7 +53,7 @@ If (!(Test-Path $BuildPath)) {
 }
 
 $DLLs = @(
-  [DLLConfig]@{
+  [FileConfig]@{
     FileName       = "mdAddr.dll";
     ReleaseVersion = $RELEASE_VERSION;
     OS             = "WINDOWS";
@@ -60,7 +61,7 @@ $DLLs = @(
     Architecture   = "64BIT";
     Type           = "BINARY";
   },
-  [DLLConfig]@{
+  [FileConfig]@{
     FileName       = "mdGeo.dll";
     ReleaseVersion = $RELEASE_VERSION;
     OS             = "WINDOWS";
@@ -68,7 +69,7 @@ $DLLs = @(
     Architecture   = "64BIT";
     Type           = "BINARY";
   },
-  [DLLConfig]@{
+  [FileConfig]@{
     FileName       = "mdGlobalAddr.dll";
     ReleaseVersion = $RELEASE_VERSION;
     OS             = "WINDOWS";
@@ -76,7 +77,7 @@ $DLLs = @(
     Architecture   = "64BIT";
     Type           = "BINARY";
   },
-  [DLLConfig]@{
+  [FileConfig]@{
     FileName       = "mdRightFielder.dll";
     ReleaseVersion = $RELEASE_VERSION;
     OS             = "WINDOWS";
@@ -86,44 +87,28 @@ $DLLs = @(
   }
 )
 
-$Manifests = @(
-  [ManifestConfig]@{
-    ManifestName   = "global_dq_data";
-    ReleaseVersion = $RELEASE_VERSION;
-  },
-  [ManifestConfig]@{
-    ManifestName   = "dq_addr_data"
-    ReleaseVersion = $RELEASE_VERSION;
-  },
-  [ManifestConfig]@{
-    ManifestName   = "geocoder_data";
-    ReleaseVersion = $RELEASE_VERSION;
-  },
-  [ManifestConfig]@{
-    ManifestName   = "rf_data";
-    ReleaseVersion = $RELEASE_VERSION;
-  }
-)
+$Wrapper          = [FileConfig]@{
+  FileName        = "mdGlobalAddr_cSharpCode.cs";
+  ReleaseVersion  = $RELEASE_VERSION;
+  OS              = "ANY";
+  Compiler        = "NET";
+  Architecture    = "ANY" ;
+  Type            = "INTERFACE"
+}
 
 ######################## Functions #########################
 
 function DownloadDataFiles([string] $license) {
-  $DataProg = 0
-
   Write-Host "`n=============================== MELISSA UPDATER ============================="
   Write-Host "MELISSA UPDATER IS DOWNLOADING DATA FILE(S)..."
 
-  foreach ($Manifest in $Manifests) {
-    Write-Progress -Activity "Downloading Manifest(s)" -Status "$([math]::round($DataProg / $Manifests.Count * 100, 2))% Complete:"  -PercentComplete ($DataProg / $Manifests.Count * 100)
+  .\MelissaUpdater\MelissaUpdater.exe manifest -p $ProductName -r $RELEASE_VERSION -l $license -t $DataPath 
+  if($? -eq $False ) {
+    Write-Host "`nCannot run Melissa Updater. Please check your license string!"
+    Exit
+  }     
 
-    .\MelissaUpdater\MelissaUpdater.exe manifest -p $Manifest.ManifestName -r $Manifest.ReleaseVersion -l $license -t $DataPath 
-    if($? -eq $False ) {
-      Write-Host "`nCannot run Melissa Updater. Please check your license string!"
-      Exit
-    }
-
-    Write-Host "Melissa Updater finished downloading data file(s)!"
-  }
+  Write-Host "Melissa Updater finished downloading data file(s)!"
 }
 
 function DownloadDLLs() {
@@ -151,6 +136,28 @@ function DownloadDLLs() {
     Write-Host "Melissa Updater finished downloading " $DLL.FileName "!"
     $DLLProg++
   }
+}
+
+function DownloadWrapper() {
+  Write-Host "MELISSA UPDATER IS DOWNLOADING WRAPPER(S)..."
+
+  # Check for quiet mode
+  if ($quiet) {
+    .\MelissaUpdater\MelissaUpdater.exe file --filename $Wrapper.FileName --release_version $Wrapper.ReleaseVersion --license $LICENSE --os $Wrapper.OS --compiler $Wrapper.Compiler --architecture $Wrapper.Architecture --type $Wrapper.Type --target_directory $ProjectPath > $null
+    if(($?) -eq $False) {
+        Write-Host "`nCannot run Melissa Updater. Please check your license string!"
+        Exit
+    }
+  }
+  else {
+    .\MelissaUpdater\MelissaUpdater.exe file --filename $Wrapper.FileName --release_version $Wrapper.ReleaseVersion --license $LICENSE --os $Wrapper.OS --compiler $Wrapper.Compiler --architecture $Wrapper.Architecture --type $Wrapper.Type --target_directory $ProjectPath 
+    if(($?) -eq $False) {
+        Write-Host "`nCannot run Melissa Updater. Please check your license string!"
+        Exit
+    }
+  }
+
+  Write-Host "Melissa Updater finished downloading " $Wrapper.FileName "!"
 }
 
 function CheckDLLs() {
@@ -181,10 +188,9 @@ function CheckDLLs() {
   }
 }
 
-
 ########################## Main ############################
 
-Write-Host "`n======================= Melissa Global Address Object =======================`n                    [ .NET | Windows | 64BIT ]`n"
+Write-Host "`n======================= Melissa Global Address Object =======================`n                         [ .NET | Windows | 64BIT ]`n"
 
 # Get license (either from parameters or user input)
 if ([string]::IsNullOrEmpty($license) ) {
@@ -210,7 +216,10 @@ DownloadDataFiles -license $License      # comment out this line if using DQS Re
 # Download dll(s)
 DownloadDlls -license $License
 
-# # Check if all dll(s) have been downloaded. Exit script if missing
+# Download wrapper(s)
+DownloadWrapper -license $License
+
+# Check if all dll(s) have been downloaded. Exit script if missing
 $DLLsAreDownloaded = CheckDLLs
 
 if (!$DLLsAreDownloaded) {
