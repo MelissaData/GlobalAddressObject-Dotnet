@@ -42,7 +42,7 @@ And return
 
 ## Tested Environments
 - Windows 10 64-bit .NET 7.0, Powershell 5.1
-- Melissa data files for 2024-Q2
+- Melissa data files for 2024-Q3
 
 ## Required File(s) and Programs
 
