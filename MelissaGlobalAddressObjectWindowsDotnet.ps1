@@ -253,7 +253,7 @@ Write-Host "All file(s) have been downloaded/updated! "
 # Build project
 Write-Host "`n================================ BUILD PROJECT =============================="
 
-dotnet publish -f="net7.0" -c Release -o $BuildPath MelissaGlobalAddressObjectWindowsDotnet\MelissaGlobalAddressObjectWindowsDotnet.csproj
+dotnet publish -f="net8.0" -c Release -o $BuildPath MelissaGlobalAddressObjectWindowsDotnet\MelissaGlobalAddressObjectWindowsDotnet.csproj
 
 # Run project
 if ([string]::IsNullOrEmpty($addressLine1) -and [string]::IsNullOrEmpty($addressLine2) -and [string]::IsNullOrEmpty($addressLine3) -and [string]::IsNullOrEmpty($locality) -and [string]::IsNullOrEmpty($administrativeArea) -and [string]::IsNullOrEmpty($postalCode) -and [string]::IsNullOrEmpty($country)) {
